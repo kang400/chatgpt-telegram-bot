@@ -12,3 +12,14 @@
 4. store the `TELEGRAM_BOT_TOKEN` and `OPENAI_API_KEY` to .env
 5. start bot `python main.py`
 
+## Usage
+
+**All commands to uses**
+
+```text
+/translation - Translate all languages to English
+/ask - Ask everything
+/tts_vi - Text to Speech(Vietnamese)
+```
+
+_send a voice record to use speech to text_

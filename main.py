@@ -1,3 +1,4 @@
+from io import BytesIO
 import os
 from telegram import Update
 from telegram.ext import Application, MessageHandler, CommandHandler, ContextTypes, filters
@@ -5,6 +6,7 @@ import openai
 import whisper
 from dotenv import load_dotenv
 from pathlib import Path
+from gtts import gTTS
 
 load_dotenv()
 
@@ -58,6 +60,28 @@ async def handle_ask(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     )
 
 
+async def handle_tts_vi(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    msg = update.message.text
+    msg = msg.replace("/tts_vi", "")
+
+    file = 'tts.mp3'
+
+    tts = gTTS(msg, lang='vi')
+
+    tts.save(file)
+
+    f = open(file, "rb")
+
+    await context.bot.send_audio(
+        chat_id=update.message.chat_id,
+        audio=f
+    )
+
+    f.close()
+
+    os.remove(file)
+
+
 # Define function to handle incoming voice to transcribe
 async def handle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
@@ -82,6 +106,7 @@ def main() -> None:
     bot = Application.builder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
     bot.add_handler(CommandHandler('translation', handle_translation))
     bot.add_handler(CommandHandler("ask", handle_ask))
+    bot.add_handler(CommandHandler("tts_vi", handle_tts_vi))
     bot.add_handler(MessageHandler(filters.VOICE, handle_audio))
     bot.run_polling()
 
